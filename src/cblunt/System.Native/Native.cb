@@ -1,0 +1,9 @@
+using native <vector>;
+
+namespace System
+{
+	public static class Native
+	{
+		
+	}
+}
