@@ -1,12 +1,11 @@
 #define PTR_WIDTH sizeof(void*)
 
-#include "_RebuiltType.hpp"
-#include "../../../../ulr/ULR/Lib/ULRAPI.hpp"
+#include "../../../../ulr/ULR/Lib/Public/StdULR.hpp"
 #include <string>
 
-using ULR::API::IULRAPI;
+using ULR::Type;
 
-extern IULRAPI* api;
+extern ULRAPIImpl* api;
 
 // TODO: RIGHT NOW STRINGS ONLY ACCEPT A SINGLE BYTE CHAR 
 // WHEN THEY SHOULD ACCEPT A DOUBLE BYTE CHAR
@@ -22,11 +21,11 @@ int special_string_ns1_System_get_Length(void* self)
 	return sizeptr[0]; // first four bytes constitute the size value
 }
 
-void* special_string_MAKE_FROM_LITERAL(const char* str, int len)
+void* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
 {
 	Type* type = (Type*) api->GetType("System.String", "System.Runtime.dll"); // TODO: cache this from InitAssembly
 
-	size_t obj_size = sizeof(type)+sizeof(int)+(PTR_WIDTH*len);
+	size_t obj_size = sizeof(type)+sizeof(int)+(sizeof(char16_t)*len);
 
 	void** str_obj = (void**) api->AllocateObject(obj_size);
 	
@@ -36,9 +35,9 @@ void* special_string_MAKE_FROM_LITERAL(const char* str, int len)
 
 	str_obj_offset_for_len_place[0] = len;
 
-	char* str_obj_offset_for_char_copy = reinterpret_cast<char*>(str_obj_offset_for_len_place+1);
+	char16_t* str_obj_offset_for_char_copy = reinterpret_cast<char16_t*>(str_obj_offset_for_len_place+1);
 
-	memcpy(str_obj_offset_for_char_copy, str, len);
+	memcpy(str_obj_offset_for_char_copy, str, len*sizeof(char16_t));
 
 	return str_obj;
 }
@@ -57,7 +56,7 @@ void* special_string_overload0_operator_add_ns1_System(void* self, void* otherst
 
 	size_t new_len = sizeof_self+sizeof_other;
 
-	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+new_len);
+	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+(new_len*sizeof(char16_t)));
 	
 	new_obj[0] = type;
 	
@@ -65,15 +64,15 @@ void* special_string_overload0_operator_add_ns1_System(void* self, void* otherst
 
 	str_obj_offset_for_len_place[0] = new_len;
 
-	char* str_obj_offset_for_char_copy = reinterpret_cast<char*>(str_obj_offset_for_len_place+1);
+	char16_t* str_obj_offset_for_char_copy = reinterpret_cast<char16_t*>(str_obj_offset_for_len_place+1);
 
-	memcpy(str_obj_offset_for_char_copy, ((char*) self)+PTR_WIDTH+sizeof(int), sizeof_self);
-	memcpy(str_obj_offset_for_char_copy+sizeof_self, ((char*) otherstr)+PTR_WIDTH+sizeof(int), sizeof_other);
+	memcpy(str_obj_offset_for_char_copy, ((char*) self)+PTR_WIDTH+sizeof(int), sizeof_self*sizeof(char16_t));
+	memcpy(str_obj_offset_for_char_copy+sizeof_self, ((char*) otherstr)+PTR_WIDTH+sizeof(int), sizeof_other*sizeof(char16_t));
 
 	return new_obj;
 }
 
-void* special_string_overload1_operator_add_ns1_System(void* self, short ch)
+void* special_string_overload1_operator_add_ns1_System(void* self, char16_t ch)
 {
 	Type* type = (Type*) api->GetType("System.String", "System.Runtime.dll"); // TODO: cache this from InitAssembly
 
@@ -83,7 +82,7 @@ void* special_string_overload1_operator_add_ns1_System(void* self, short ch)
 
 	size_t new_len = sizeof_self+1;
 
-	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+new_len);
+	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+(new_len*sizeof(char16_t)));
 	
 	new_obj[0] = type;
 	
@@ -91,11 +90,11 @@ void* special_string_overload1_operator_add_ns1_System(void* self, short ch)
 
 	str_obj_offset_for_len_place[0] = new_len;
 
-	char* str_obj_offset_for_char_copy = reinterpret_cast<char*>(str_obj_offset_for_len_place+1);
+	char16_t* str_obj_offset_for_char_copy = reinterpret_cast<char16_t*>(str_obj_offset_for_len_place+1);
 
-	memcpy(str_obj_offset_for_char_copy, ((char*) self)+PTR_WIDTH+sizeof(int), sizeof_self);
+	memcpy(str_obj_offset_for_char_copy, ((char*) self)+PTR_WIDTH+sizeof(int), sizeof_self*sizeof(char16_t));
 
-	str_obj_offset_for_char_copy[new_len-1] = (char) ch;
+	str_obj_offset_for_char_copy[new_len-1] = ch;
 
 	return new_obj;
 }

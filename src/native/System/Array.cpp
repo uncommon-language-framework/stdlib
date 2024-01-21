@@ -1,11 +1,10 @@
 #define PTR_WIDTH sizeof(void*)
-#include "_RebuiltType.hpp"
-#include "../../../../ulr/ULR/Lib/ULRAPI.hpp"
+#include "../../../../ulr/ULR/Lib/Public/StdULR.hpp"
 #include <string>
 
-using ULR::API::IULRAPI;
+using ULR::Type;
 
-extern IULRAPI* api;
+extern ULRAPIImpl* api;
 
 extern "C"
 {
@@ -58,10 +57,17 @@ void* special_array_ns1_System_ToString(void* self)
 
 	int type_name_len = strlen(type_name);
 
+	char16_t* as_ch16 = (char16_t*) api->AllocateObject(type_name_len*sizeof(char16_t));
+
+	for (int i = 0; i < type_name_len; i++)
+	{
+		as_ch16[i] = type_name[i];
+	}
+
 	void* type_ptr = api->GetType("System.String", "System.Runtime.dll");
 
 	/* String object layout -- [ptr-to-string-type, length-of-string, chars...] */
-	size_t obj_size = sizeof(type_ptr)+sizeof(type_name_len)+(sizeof(char)*type_name_len);
+	size_t obj_size = sizeof(type_ptr)+sizeof(type_name_len)+(sizeof(char16_t)*type_name_len);
 
 	// we use AllocateObject() here rather than malloc() so this object can be gc-registered in the future
 	void** string_object = (void**) api->AllocateObject(obj_size);
@@ -72,9 +78,9 @@ void* special_array_ns1_System_ToString(void* self)
 
 	string_obj_offset_for_len_place[0] = type_name_len;
 
-	char* string_obj_offset_for_char_copy = reinterpret_cast<char*>(string_obj_offset_for_len_place+1);
+	char16_t* string_obj_offset_for_char_copy = reinterpret_cast<char16_t*>(string_obj_offset_for_len_place+1);
 
-	memcpy(string_obj_offset_for_char_copy, type_name, type_name_len);
+	memcpy(string_obj_offset_for_char_copy, type_name, type_name_len*sizeof(char16_t));
 
 	/* The string is complete! */
 

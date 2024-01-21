@@ -16,6 +16,8 @@ Console.WriteLine(ReferenceEquals(str, str.ToString()));
 
 Console.WriteLine(sizeof(char));
 
+ReflectionTest.Method();
+
 struct PropTest
 {
 	public readonly int Prop {
