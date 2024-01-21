@@ -5,6 +5,7 @@
 using ULR::Type;
 
 extern ULRAPIImpl* api;
+extern Type* CachedSystemStringType;
 
 extern "C"
 {
@@ -64,7 +65,7 @@ void* special_array_ns1_System_ToString(void* self)
 		as_ch16[i] = type_name[i];
 	}
 
-	void* type_ptr = api->GetType("System.String", "System.Runtime.dll");
+	void* type_ptr = CachedSystemStringType;
 
 	/* String object layout -- [ptr-to-string-type, length-of-string, chars...] */
 	size_t obj_size = sizeof(type_ptr)+sizeof(type_name_len)+(sizeof(char16_t)*type_name_len);

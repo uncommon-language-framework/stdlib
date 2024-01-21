@@ -6,9 +6,7 @@
 using ULR::Type;
 
 extern ULRAPIImpl* api;
-
-// TODO: RIGHT NOW STRINGS ONLY ACCEPT A SINGLE BYTE CHAR 
-// WHEN THEY SHOULD ACCEPT A DOUBLE BYTE CHAR
+extern Type* CachedSystemStringType;
 
 extern "C"
 {
@@ -23,15 +21,13 @@ int special_string_ns1_System_get_Length(void* self)
 
 void* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
 {
-	Type* type = (Type*) api->GetType("System.String", "System.Runtime.dll"); // TODO: cache this from InitAssembly
-
-	size_t obj_size = sizeof(type)+sizeof(int)+(sizeof(char16_t)*len);
+	size_t obj_size = sizeof(CachedSystemStringType)+sizeof(int)+(sizeof(char16_t)*len);
 
 	void** str_obj = (void**) api->AllocateObject(obj_size);
 	
-	str_obj[0] = type;
+	str_obj[0] = CachedSystemStringType;
 	
-	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(str_obj)+sizeof(type));
+	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(str_obj)+sizeof(CachedSystemStringType));
 
 	str_obj_offset_for_len_place[0] = len;
 
@@ -44,8 +40,6 @@ void* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
 
 void* special_string_overload0_operator_add_ns1_System(void* self, void* otherstr)
 {
-	Type* type = (Type*) api->GetType("System.String", "System.Runtime.dll"); // TODO: cache this from InitAssembly
-
 	int* sizeptr = reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH);
 
 	size_t sizeof_self = sizeptr[0];
@@ -56,11 +50,11 @@ void* special_string_overload0_operator_add_ns1_System(void* self, void* otherst
 
 	size_t new_len = sizeof_self+sizeof_other;
 
-	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+(new_len*sizeof(char16_t)));
+	void** new_obj = (void**) api->AllocateObject(sizeof(CachedSystemStringType)+sizeof(new_len)+(new_len*sizeof(char16_t)));
 	
-	new_obj[0] = type;
+	new_obj[0] = CachedSystemStringType;
 	
-	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(new_obj)+sizeof(type));
+	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(new_obj)+sizeof(CachedSystemStringType));
 
 	str_obj_offset_for_len_place[0] = new_len;
 
@@ -74,19 +68,17 @@ void* special_string_overload0_operator_add_ns1_System(void* self, void* otherst
 
 void* special_string_overload1_operator_add_ns1_System(void* self, char16_t ch)
 {
-	Type* type = (Type*) api->GetType("System.String", "System.Runtime.dll"); // TODO: cache this from InitAssembly
-
 	int* sizeptr = reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH);
 
 	size_t sizeof_self = sizeptr[0];
 
 	size_t new_len = sizeof_self+1;
 
-	void** new_obj = (void**) api->AllocateObject(sizeof(type)+sizeof(new_len)+(new_len*sizeof(char16_t)));
+	void** new_obj = (void**) api->AllocateObject(sizeof(CachedSystemStringType)+sizeof(new_len)+(new_len*sizeof(char16_t)));
 	
-	new_obj[0] = type;
+	new_obj[0] = CachedSystemStringType;
 	
-	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(new_obj)+sizeof(type));
+	int* str_obj_offset_for_len_place = reinterpret_cast<int*>(reinterpret_cast<char*>(new_obj)+sizeof(CachedSystemStringType));
 
 	str_obj_offset_for_len_place[0] = new_len;
 
@@ -105,96 +97,3 @@ void* special_string_ns1_System_ToString(void* self)
 }
 
 }
-
-// #include "../String.hpp"
-// #include <codecvt>
-// #include <locale>
-// #include <array>
-
-// namespace System
-// {
-// 	String::String(std::wstring string)
-// 	{
-		
-// 		inner = inner;
-// 	}
-
-// 	String::String(std::string string)
-// 	{
-		
-// 		inner = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
-// 	}
-
-// 	String::String(Char string[])
-// 	{
-		
-// 		size_t arr_size = *(&string + 1) - string;
-		
-// 		wchar_t arr[arr_size];
-
-// 		for (int i; i < arr_size; i++) { arr[i] = string[i].ToNative(); }
-
-// 		inner = std::wstring(arr);
-// 	}
-
-// 	String::String(const wchar_t string[])
-// 	{
-		
-// 		inner = std::wstring(string);
-// 	}
-
-// 	String::String(const wchar_t string[], size_t length)
-// 	{
-		
-// 		inner = std::wstring(string, length);
-// 	}
-
-// 	String::String(const char string[], size_t length)
-// 	{
-		
-// 		inner = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(std::string(string, length));
-// 	}
-
-// 	String::String(const char string[])
-// 	{
-		
-// 		inner = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
-// 	}
-
-// 	std::wstring String::ToCpp() const
-// 	{
-// 		return inner;
-// 	}
-
-// 	String* String::ToString() const
-// 	{
-// 		std::wstring copy = inner;
-
-// 		return new String(copy);
-// 	}
-
-// 	String* String::operator+(const String* other) const
-// 	{
-// 		String* ret = new String(inner+other->inner);
-
-// 		return ret;
-// 	}
-
-// 	String* String::operator+(const Char& other) const
-// 	{
-// 		return new String(inner+other.ToNative());
-// 	}
-
-// 	Boolean String::operator==(const String* other) const
-// 	{
-// 		return Boolean(this->inner == other->inner);
-// 	}
-
-
-// 	String::~String()
-// 	{
-
-// 	}
-
-// 	std::shared_ptr<String> String::Empty = std::make_shared<String>("");
-// }

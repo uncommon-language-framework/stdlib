@@ -5,7 +5,10 @@
 	"rv[System]" name "$" #size ";.ctor p([System]" name ");\n"
 
 
+using ULR::Type;
+
 ULRAPIImpl* api;
+Type* CachedSystemStringType;
 
 extern "C"
 {
@@ -13,6 +16,7 @@ extern "C"
 void InitAssembly(ULRAPIImpl* inject_api)
 {
 	api = inject_api;
+	CachedSystemStringType = api->GetType("[System]String", "System.Runtime.Native.dll");
 }
 
 char ulrmeta[] = IntStruct("Int32", 4)
