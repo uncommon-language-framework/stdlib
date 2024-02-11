@@ -1,5 +1,5 @@
 #define PTR_WIDTH sizeof(void*)
-#include "../../../../ulr/ULR/Lib/Public/StdULR.hpp"
+#include <stdulr>
 #include <string>
 
 using ULR::Type;
@@ -34,7 +34,7 @@ void* special_array_ref_overload_operator_idx_ns1_System(void** self, int idx)
 	return elems[idx]; // TODO: make this safe to throw index out of bounds exception if idx does not exist
 }
 
-void* special_array_ref_overload_ctor_ns1_System(int size, void* type)
+void* special_array_ref_overload_ctor_ns1_System(int size, Type* type)
 {
 	size_t obj_size = sizeof(type)+sizeof(int)+(PTR_WIDTH*size);
 
@@ -45,6 +45,25 @@ void* special_array_ref_overload_ctor_ns1_System(int size, void* type)
 	int* arr_obj_place_len = reinterpret_cast<int*>(reinterpret_cast<char*>(arr_obj)+sizeof(type));
 
 	arr_obj_place_len[0] = size;
+
+	return arr_obj;
+}
+
+void* special_array_from_ptr(void* ptr, int size, Type* type)
+{
+	size_t obj_size = sizeof(type)+sizeof(int)+(PTR_WIDTH*size);
+	
+	void** arr_obj = (void**) api->AllocateZeroed(obj_size);
+
+	arr_obj[0] = type;
+
+	int* arr_obj_place_len = reinterpret_cast<int*>(reinterpret_cast<char*>(arr_obj)+sizeof(type));
+
+	arr_obj_place_len[0] = size;
+
+	char* arr_obj_for_data_place = (char*) (arr_obj_place_len+1);
+
+	memcpy(arr_obj_for_data_place, ptr, size);
 
 	return arr_obj;
 }
@@ -65,7 +84,7 @@ void* special_array_ns1_System_ToString(void* self)
 		as_ch16[i] = type_name[i];
 	}
 
-	void* type_ptr = CachedSystemStringType;
+	Type* type_ptr = CachedSystemStringType;
 
 	/* String object layout -- [ptr-to-string-type, length-of-string, chars...] */
 	size_t obj_size = sizeof(type_ptr)+sizeof(type_name_len)+(sizeof(char16_t)*type_name_len);

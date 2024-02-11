@@ -1,0 +1,8 @@
+using System.IO;
+
+namespace System;
+
+public static class Console
+{
+	public static readonly TextWriter Out;
+}

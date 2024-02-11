@@ -1,6 +1,6 @@
 #define PTR_WIDTH sizeof(void*)
 
-#include "../../../../ulr/ULR/Lib/Public/StdULR.hpp"
+#include <stdulr>
 #include <string>
 
 using ULR::Type;
