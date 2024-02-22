@@ -1,5 +1,3 @@
-// #include <System.Runtime.Native.dll>
-
 #pragma region stubs
 
 namespace System
@@ -47,9 +45,7 @@ using namespace ULR::FileSystem;
 
 namespace System
 {
-	class
-		typedecl(public)
-		typedecl(static)
+	typedecl(public) class typedecl(static)
 		Console
 	{
 		public:

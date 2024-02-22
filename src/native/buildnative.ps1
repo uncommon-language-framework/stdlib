@@ -11,7 +11,7 @@ foreach ($file in $files)
 	}
 }
 
-g++64 -c $compile "AssemblyInfo.cpp" "../../../ulr/ULR/Lib/Public/MethodInvokeImpl.cpp" -fpermissive -masm=intel -g -D DEBUG=true
-g++64 -o "System.Runtime.Native.dll" *.o -shared
+g++64 -c $compile "AssemblyInfo.cpp" -Wno-write-strings -masm=intel -g -D DEBUG=true -std=c++17
+g++64 -o "System.Runtime.Native.dll" *.o "Ulr.NativeLib.dll" -shared
 
 Remove-Item *.o

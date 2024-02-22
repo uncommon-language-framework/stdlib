@@ -51,6 +51,8 @@
 
 		ReflectionTest.Method5();
 
+		HashCodeTest.Method();
+
 		return 0;
 	}
 }

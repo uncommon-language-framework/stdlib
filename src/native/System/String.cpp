@@ -11,7 +11,7 @@ extern Type* CachedSystemStringType;
 extern "C"
 {
 
-int special_string_ns1_System_get_Length(void* self)
+int overload0_ns1_System_get_Length(char* self)
 {
 	// cast void* to ptr to bytes, add ptr size offset, recast to ptr to int to grab length value
 	int* sizeptr = reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH);
@@ -19,7 +19,7 @@ int special_string_ns1_System_get_Length(void* self)
 	return sizeptr[0]; // first four bytes constitute the size value
 }
 
-void* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
+char* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
 {
 	size_t obj_size = sizeof(CachedSystemStringType)+sizeof(int)+(sizeof(char16_t)*len);
 
@@ -35,10 +35,10 @@ void* special_string_MAKE_FROM_LITERAL(const char16_t* str, int len)
 
 	memcpy(str_obj_offset_for_char_copy, str, len*sizeof(char16_t));
 
-	return str_obj;
+	return (char*) str_obj;
 }
 
-void* special_string_overload0_operator_add_ns1_System(void* self, void* otherstr)
+char* special_string_overload0_operator_add_ns1_System(char* self, void* otherstr)
 {
 	int* sizeptr = reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH);
 
@@ -63,10 +63,10 @@ void* special_string_overload0_operator_add_ns1_System(void* self, void* otherst
 	memcpy(str_obj_offset_for_char_copy, ((char*) self)+PTR_WIDTH+sizeof(int), sizeof_self*sizeof(char16_t));
 	memcpy(str_obj_offset_for_char_copy+sizeof_self, ((char*) otherstr)+PTR_WIDTH+sizeof(int), sizeof_other*sizeof(char16_t));
 
-	return new_obj;
+	return (char*) new_obj;
 }
 
-void* special_string_overload1_operator_add_ns1_System(void* self, char16_t ch)
+char* special_string_overload1_operator_add_ns1_System(char* self, char16_t ch)
 {
 	int* sizeptr = reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH);
 
@@ -88,12 +88,19 @@ void* special_string_overload1_operator_add_ns1_System(void* self, char16_t ch)
 
 	str_obj_offset_for_char_copy[new_len-1] = ch;
 
-	return new_obj;
+	return (char*) new_obj;
 }
 
-void* special_string_ns1_System_ToString(void* self)
+char* special_string_ns1_System_ToString(char* self)
 {
 	return self;
+}
+
+char* ns1_System_String_Empty;
+
+void ns1_System_String_static_ctor()
+{
+	ns1_System_String_Empty = special_string_MAKE_FROM_LITERAL(u"", 0);
 }
 
 }

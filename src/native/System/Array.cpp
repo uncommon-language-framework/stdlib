@@ -2,13 +2,10 @@
 #include <stdulr>
 #include <string>
 
-using ULR::Type;
-
 extern ULRAPIImpl* api;
 extern Type* CachedSystemStringType;
 
-extern "C"
-{
+BEGIN_ULR_EXPORT
 
 // we can put get_Length right after System_ since we have specified `special array` so it is autobound to arrays
 int special_array_ns1_System_get_Length(void* self)
@@ -107,4 +104,4 @@ void* special_array_ns1_System_ToString(void* self)
 	return string_object; // important - we return the start pointer to the object
 }
 
-} /* extern "C" */
+END_ULR_EXPORT
