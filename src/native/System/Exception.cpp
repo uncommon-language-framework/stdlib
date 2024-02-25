@@ -34,10 +34,10 @@ void overload2_ns1_System_Exception_ctor(char* self, void* msg, void* innerexc)
 	*((void**) (self+32)) = innerexc;
 }
 
-char* special_exception_prep_for_throw(char* self, char* native_stacktrace, void* current_func)
+char* special_exception_prep_for_throw(char* self)
 {
 	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-    std::u16string utf16_string = converter.from_bytes(native_stacktrace);
+    std::u16string utf16_string = converter.from_bytes(api->GetStackTrace(1));
 	
 	const char16_t* ptrstr = utf16_string.c_str();
 
