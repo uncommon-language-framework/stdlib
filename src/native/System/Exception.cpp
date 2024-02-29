@@ -17,8 +17,8 @@ void overload0_ns1_System_Exception_ctor(char* self)
 	// *((void**) (self+24)) = 
 	*((void**) (self+32)) = nullptr;
 }
-
-void overload1_ns1_System_Exception_ctor(char* self, void* msg)
+	
+void overload1_ns1_System_Exception_ctor(char* self, char* msg)
 {
 	*((void**) (self+8)) = msg;
 	// *((void**) (self+16)) =
@@ -26,7 +26,7 @@ void overload1_ns1_System_Exception_ctor(char* self, void* msg)
 	*((void**) (self+32)) = nullptr;
 }
 
-void overload2_ns1_System_Exception_ctor(char* self, void* msg, void* innerexc)
+void overload2_ns1_System_Exception_ctor(char* self, char* msg, void* innerexc)
 {
 	*((void**) (self+8)) = msg;
 	// *((void**) (self+16)) =

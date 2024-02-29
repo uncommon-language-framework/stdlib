@@ -4,8 +4,13 @@
 
 extern ULRAPIImpl* api;
 extern Type* CachedSystemStringType;
+extern Type* CachedSystemArtificialBoundViolationException;
 
 BEGIN_ULR_EXPORT
+
+extern void overload1_ns1_System_Exception_ctor(char*, char*);
+extern char* special_string_MAKE_FROM_LITERAL(const wchar_t*, int);
+extern char* special_exception_prep_for_throw(char*);
 
 // we can put get_Length right after System_ since we have specified `special array` so it is autobound to arrays
 int special_array_ns1_System_get_Length(void* self)
@@ -18,20 +23,26 @@ int special_array_ns1_System_get_Length(void* self)
 
 // this generic indexing function will work for arrays of reference types since the pointer size is known at 
 // compile time, but compilers will have to generate their own versions of this function for arrays of different value types
-void* special_array_ref_overload_operator_idx_ns1_System(void** self, int idx)
+char* special_array_ref_overload_operator_idx_ns1_System(char* self, int idx)
 {
 	// extract out size, add PTR_WIDTH+4 to the char* ptr to skip vtype ptr & size value
-	void** elems = reinterpret_cast<void**>(reinterpret_cast<char*>(self)+PTR_WIDTH+4);
+	char** elems = reinterpret_cast<char**>(self+PTR_WIDTH+sizeof(int));
 
-	if (idx < 0 || idx > special_array_ns1_System_get_Length(self)-1)
+	if (idx < 0 || idx > reinterpret_cast<int*>(reinterpret_cast<char*>(self)+PTR_WIDTH)[0]-1) // this is length but to increase performance we wont use the function
 	{
-		/* throw idx out of bound exc, optimize later by using prev buff */
+		throw special_exception_prep_for_throw(
+			api->ConstructObject(
+				overload1_ns1_System_Exception_ctor,
+				CachedSystemArtificialBoundViolationException,
+				special_string_MAKE_FROM_LITERAL(L"Index out of array bounds", 25)
+			)
+		);
 	}
 
-	return elems[idx]; // TODO: make this safe to throw index out of bounds exception if idx does not exist
+	return elems[idx];
 }
 
-void* special_array_ref_overload_ctor_ns1_System(int size, Type* type)
+char* special_array_ref_overload_ctor_ns1_System(int size, Type* type)
 {
 	size_t obj_size = sizeof(type)+sizeof(int)+(PTR_WIDTH*size);
 
@@ -43,10 +54,10 @@ void* special_array_ref_overload_ctor_ns1_System(int size, Type* type)
 
 	arr_obj_place_len[0] = size;
 
-	return arr_obj;
+	return (char*) arr_obj;
 }
 
-void* special_array_from_ptr(void* ptr, int size, Type* type)
+char* special_array_from_ptr(void* ptr, int size, Type* type)
 {
 	size_t obj_size = sizeof(type)+sizeof(int)+(PTR_WIDTH*size);
 	
@@ -60,12 +71,12 @@ void* special_array_from_ptr(void* ptr, int size, Type* type)
 
 	char* arr_obj_for_data_place = (char*) (arr_obj_place_len+1);
 
-	memcpy(arr_obj_for_data_place, ptr, size);
+	memcpy(arr_obj_for_data_place, ptr, size*PTR_WIDTH);
 
-	return arr_obj;
+	return (char*) arr_obj;
 }
 
-void* special_array_ns1_System_ToString(void* self)
+char* special_array_ns1_System_ToString(char* self)
 {
 	Type** elems = reinterpret_cast<Type**>(self);
 	Type* self_type = elems[0];
@@ -101,7 +112,7 @@ void* special_array_ns1_System_ToString(void* self)
 
 	/* The string is complete! */
 
-	return string_object; // important - we return the start pointer to the object
+	return (char*) string_object; // important - we return the start pointer to the object
 }
 
 END_ULR_EXPORT

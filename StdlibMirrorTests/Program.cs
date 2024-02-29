@@ -20,6 +20,10 @@
 		Console.WriteLine(ReferenceEquals(three, four));
 		Console.WriteLine("------END Array.Empty<T> TESTS--------");
 
+		Console.WriteLine("---Start Array Type Tests---");
+		Console.WriteLine(typeof(int[]) == two.GetType());
+		Console.WriteLine(one.GetType() == two.GetType());
+		Console.WriteLine("---End Array Type Tests---");
 		var test = new PropTest();
 
 		_ = test.Prop;
