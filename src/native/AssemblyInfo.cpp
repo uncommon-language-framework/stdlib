@@ -73,7 +73,8 @@ char ulrmeta[] =
 	// [System.Collections.Generic]
 
 	// for now, here for generic parsing test
-	"pc[System.Collections.Generic]List<>:[System]Object,$0;.ctor ([System]Int32);\n"
+	"pc[System.Collections.Generic]List<>:[System]Object,$0;.ctor ([System]Int32);"
+	".fldv T0[] _data;\n"
 
 	// END [System.Collections.Generic]
 
@@ -119,8 +120,8 @@ void* ulraddr[ /* <- remove this once addrs are added */] = {
 	(void*) 0, // overload0_ns1_System_Type_ctor,
 	(void*) 0, // overload0_ns1_System_Type_GetType,
 	(void*) 0, // overload0_ns2_System_Reflection_MethodBase_ctor
-	(void*) "" // <- should be LLVM IR for generic
-
+	(void*) "", // <- should be LLVM IR for generic
+	(void*) 8
 };
 
 // technically ulrlocalsmapping should be the same length of ulraddr
