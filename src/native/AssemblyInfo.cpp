@@ -52,7 +52,7 @@ char ulrmeta[] =
 	IntStruct("Byte", 1)
 	IntStruct("UInt16", 2)
 	IntStruct("UInt64", 8)
-	"prv[System]Char:[System]Object,$2;\n"
+	"prv[System]Char:[System]Object,$1;\n"
 	"pc[System]String:[System]Object,$0;.fldv psr[System]String Empty;.prop pg[System]Int32 Length;\n" // sixteen since this should be for a 64-bit build
 	
 	// 8 (type ptr) + 8 (inner exc) + 8 (string message) + 8 (string stacktrace) + 8 (MethodBase targetsite)
@@ -124,9 +124,9 @@ void* ulraddr[ /* <- remove this once addrs are added */] = {
 	(void*) 8
 };
 
-// technically ulrlocalsmapping should be the same length of ulraddr
+// TODO: we have managed locals now so add them
 size_t ulrlocalslen = 0; // we don't use any managed locals rn, change later once used
 void* ulrlocals[1]; // if lcls are used, then change to ulrlocals[ulrlocalslen];
-size_t ulrlocalsmapping[1][2];  
+Type** ulrlocals_valtypeinfo[1];
 
 END_ULR_EXPORT
