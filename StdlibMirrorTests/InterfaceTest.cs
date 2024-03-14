@@ -9,3 +9,18 @@ public class InterfaceTest
 		var x = typeof(IEnumerable<>);
 	}
 }
+
+public interface IInterface
+{
+	void Func();
+}
+
+public class Base : IInterface
+{
+	public void Func() { }
+}
+
+public class Derived : Base, IInterface
+{
+	
+}

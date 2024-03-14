@@ -1,4 +1,6 @@
-﻿public class Program
+﻿using InheritanceTest;
+
+public class Program
 {
 	static int Main()
 	{
@@ -46,8 +48,10 @@
 
 		unsafe
 		{
+			#pragma warning disable CS8500
 			Console.WriteLine(sizeof(TestType));
 			Console.WriteLine(sizeof(TestTypeTwo));
+			#pragma warning restore CS8500
 		}
 
 		Console.WriteLine(typeof(IEnumerable<>));
@@ -56,6 +60,8 @@
 		ReflectionTest.Method5();
 
 		HashCodeTest.Method();
+
+		ReflectionInheritanceTest.Test();
 
 		return 0;
 	}

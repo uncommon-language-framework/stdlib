@@ -88,7 +88,7 @@ char ulrmeta[] =
 
 void* ulraddr[ /* <- remove this once addrs are added */] = {
 	(void*) overload0_ns1_System_Object_ctor,
-	(void*) ns1_System_String_Empty,
+	(void*) &ns1_System_String_Empty,
 	(void*) overload0_ns1_System_get_Length,
 
 	/* System.Exception */
