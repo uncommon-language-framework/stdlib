@@ -124,9 +124,6 @@ void* ulraddr[ /* <- remove this once addrs are added */] = {
 	(void*) 8
 };
 
-// TODO: we have managed locals now so add them
-size_t ulrlocalslen = 0; // we don't use any managed locals rn, change later once used
-void* ulrlocals[1]; // if lcls are used, then change to ulrlocals[ulrlocalslen];
-Type** ulrlocals_valtypeinfo[1];
+char* ulrdeps[] = { nullptr };
 
 END_ULR_EXPORT
